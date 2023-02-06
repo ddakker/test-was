@@ -30,10 +30,10 @@ public class RequestProcessor implements Runnable {
                  PrintWriter out = new PrintWriter(client.getOutputStream())) {
                 REQUEST_HEADERS = new HashMap<>();
                 REQUEST_PARAMATERS = new HashMap<>();
-                File tmpFile = new File("." + UUID.randomUUID().toString());;
+                File tmpResponseBody = new File("." + UUID.randomUUID().toString());;
 
                 HttpServletRequestImpl httpServletRequest = new HttpServletRequestImpl();
-                HttpServletResponseImpl httpServletResponse = new HttpServletResponseImpl(tmpFile);
+                HttpServletResponseImpl httpServletResponse = new HttpServletResponseImpl(tmpResponseBody);
                 httpServletRequest.setRemoteAddr(client.getRemoteSocketAddress());
 
                 int lineCnt = 0;
@@ -44,7 +44,6 @@ public class RequestProcessor implements Runnable {
                     } else {
                         setHeaders(line);
                     }
-                    System.out.println(1111);
                 }
                 httpServletRequest.setHeaders(REQUEST_HEADERS);
                 httpServletRequest.setParamaters(REQUEST_PARAMATERS);
@@ -75,7 +74,7 @@ public class RequestProcessor implements Runnable {
                 httpServletResponse.getWriter().close();
 
 
-                long size = tmpFile.length();
+                long size = tmpResponseBody.length();
                 httpServletResponse.setContentLength(size);
 
 
@@ -98,8 +97,8 @@ public class RequestProcessor implements Runnable {
                 out.println();
 
 
-                if (tmpFile.exists()) {
-                    try (BufferedReader fileIn = new BufferedReader(new FileReader(tmpFile))) {
+                if (tmpResponseBody.exists()) {
+                    try (BufferedReader fileIn = new BufferedReader(new FileReader(tmpResponseBody))) {
                         String content;
                         while ((content = fileIn.readLine()) != null) {
                             out.println(content);
@@ -108,8 +107,8 @@ public class RequestProcessor implements Runnable {
                 }
                 out.flush();
 
-                if (tmpFile != null && tmpFile.exists()) {
-                    tmpFile.delete();
+                if (tmpResponseBody != null && tmpResponseBody.exists()) {
+                    tmpResponseBody.delete();
                 }
             } finally {
                 if (client != null) {
