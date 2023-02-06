@@ -23,10 +23,10 @@ public class SimpleHTTPServer3 {
                  PrintWriter out = new PrintWriter(client.getOutputStream())) {
                 REQUEST_HEADERS = new HashMap<>();
                 REQUEST_PARAMATERS = new HashMap<>();
-                File tmpFile = new File("." + UUID.randomUUID().toString());;
+                File tmpResponseBody = new File("." + UUID.randomUUID().toString());;
 
                 HttpServletRequestImpl httpServletRequest = new HttpServletRequestImpl();
-                HttpServletResponseImpl httpServletResponse = new HttpServletResponseImpl(tmpFile);
+                HttpServletResponseImpl httpServletResponse = new HttpServletResponseImpl(tmpResponseBody);
                 httpServletRequest.setRemoteAddr(client.getRemoteSocketAddress());
 
                 int lineCnt = 0;
@@ -66,9 +66,7 @@ public class SimpleHTTPServer3 {
                 httpServletResponse.getWriter().flush();
                 httpServletResponse.getWriter().close();
 
-
-                long size = tmpFile.length();
-                httpServletResponse.setContentLength(size);
+                httpServletResponse.setContentLength(tmpResponseBody.length());
 
 
                 String responseFirstLine = httpServletRequest.getHttpVersion() + " " + httpServletResponse.getStatus() + " ";
@@ -90,8 +88,8 @@ public class SimpleHTTPServer3 {
                 out.println();
 
 
-                if (tmpFile.exists()) {
-                    try (BufferedReader fileIn = new BufferedReader(new FileReader(tmpFile))) {
+                if (tmpResponseBody.exists()) {
+                    try (BufferedReader fileIn = new BufferedReader(new FileReader(tmpResponseBody))) {
                         String content;
                         while ((content = fileIn.readLine()) != null) {
                             out.println(content);
@@ -100,8 +98,8 @@ public class SimpleHTTPServer3 {
                 }
                 out.flush();
 
-                if (tmpFile != null && tmpFile.exists()) {
-                    tmpFile.delete();
+                if (tmpResponseBody != null && tmpResponseBody.exists()) {
+                    tmpResponseBody.delete();
                 }
             } finally {
                 if (client != null) {

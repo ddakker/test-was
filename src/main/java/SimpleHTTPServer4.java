@@ -9,7 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class SimpleHTTPServer4 {
-    private static ExecutorService POOL = Executors.newFixedThreadPool(5);
+    private static ExecutorService POOL = Executors.newFixedThreadPool(10);
 
     public static void main(String[] args) throws IOException {
         int port = 8080;
@@ -17,7 +17,6 @@ public class SimpleHTTPServer4 {
         while (true) {
             Socket client = server.accept();
             Log.info("client: " + client);
-
             try {
                 Runnable r = new RequestProcessor(client);
                 POOL.execute(r);
